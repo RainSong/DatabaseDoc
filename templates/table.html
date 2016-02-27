@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block  title %}
+数据库信息
+{% endblock %}
+
+{% block main %}
+<div id="pageTitle">
+    <img class="Table32" title="Table" alt="Table" src="/static/imgs/Table32.png"/>
+        [{{ tableInfo.Schema }}].[{{ tableInfo.Name }}]
+</div>
+<!--描述、备注-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed" src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded" src="/static/imgs/expanded.png">
+        </div>
+        <a name="description">描述/备注</a>
+    </div>
+    <div class="panel-body">{{ tableInfo.Description }}</div>
+</div>
+<!--描述、备注-->
+
+<!--相关属性-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed" src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded" src="/static/imgs/expanded.png">
+        </div>
+        <a name="properties">相关属性</a>
+    </div>
+    <div class="panel-body">
+        <table cellspacing="1" border="0" class="dataTable table-hover">
+            <tbody>
+                <tr>
+                    <th>属性名</th>
+                    <th>值</th>
+                </tr>
+                <tr>
+                    <td>语言设置</td>
+                    <td>Latin1_General_CS_AS</td>
+                </tr>
+                <tr>
+                    <td>行数</td>
+                    <td>{{ tableInfo.RowCount  }}</td>
+                </tr>
+                <tr>
+                    <td>创建时间</td>
+                    <td>{{ tableInfo.CreateDate }}</td>
+                </tr>
+                <tr>
+                    <td>最后修改时间</td>
+                    <td>{{ tableInfo.ModifyDate }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--相关属性-->
+
+<!--列信息-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed" src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded" src="/static/imgs/expanded.png">
+        </div>
+        <a name="columns">列信息</a>
+    </div>
+    <div class="panel-body">
+        <table cellspacing="1" border="0" class="dataTable table-hover">
+            <tbody>
+            <tr>
+                <th>主外键</th>
+                <th>名称</th>
+                <th>数据类型</th>
+                <th>最大长度(Bytes)</th>
+                <th>允许为空</th>
+                <th>自增</th>
+                <th>默认值</th>
+                <th>描述与备注</th>
+            </tr>
+            {% for col in tableInfo.Columns %}
+            <tr>
+                <td>
+                    {% if col.IsPrimary %}
+                        <a href="#indexes">
+                            <img class="pkcluster" title="" alt="" src="/static/imgs/pkcluster.png"></a>
+                    {% elif col.IsIndex %}
+                        <a href="#indexes">
+                            <img src="/static/imgs/Index.png" alt="" title="" class="Index">
+                        </a>
+                    {% endif %}
+                </td>
+                <td>{{ col.Name }}</td>
+                <td>{{ col.DataType }}</td>
+                <td>{{ col.MaxLength }}</td>
+                <td>
+                    <div class="tick">
+                        {% if col.AllowNull %}
+                            <span class="do-yes">是</span>
+                        {% else %}
+                            <span class="do-no">否</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    {{ col.IdentityIinfo }}
+                </td>
+                <td>{{ col.DefaultValue }}</td>
+                <td  style="max-width:300px;">{{ col.Description }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--列信息-->
+
+<!--索引信息-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img src="/static/imgs/collapsed.png" alt="collapsed" title="collapsed" class="collapsed" style="display:none;">
+            <img src="/static/imgs/expanded.png" alt="expanded" title="expanded" class="expanded" style="">
+        </div>
+        <a name="indexes">索引</a>
+    </div>
+    <div class="panel-body">
+        <table class="dataTable table-hover" border="0" cellspacing="1">
+            <tbody>
+            <tr>
+                <th>键</th>
+                <th>名称</th>
+                <th>索引列</th>
+                <th>是否唯一</th>
+                <th>描述/备注</th>
+            </tr>
+            <tr>
+                <td>
+                    <a href="#indexes">
+                        <img src="/static/imgs/pkcluster.png"
+                             alt="Cluster Primary Key PK_Address_AddressID: AddressID"
+                             title="Cluster Primary Key PK_Address_AddressID: AddressID"
+                             class="pkcluster">
+                    </a>
+                </td>
+                <td>PK_Address_AddressID</td>
+                <td>AddressID</td>
+                <td>
+                    <div class="tick">
+                        <span class="do-yes">True</span>
+                    </div>
+                </td>
+                <td>Primary key (clustered) constraint</td>
+            </tr><tr><td></td><td>AK_Address_rowguid</td><td>rowguid</td><td><div class="tick"><span class="do-yes">True</span></div></td><td>Unique nonclustered index. Used to support replication samples.</td></tr><tr><td></td><td>IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode</td><td>AddressLine1, AddressLine2, City, StateProvinceID, PostalCode</td><td><div class="tick"><span class="do-yes">True</span></div></td><td>Nonclustered index.</td></tr><tr><td></td><td>IX_Address_StateProvinceID</td><td>StateProvinceID</td><td></td><td>Nonclustered index.</td></tr></tbody></table></div></div>
+<!--索引信息-->
+
+{% endblock %}
