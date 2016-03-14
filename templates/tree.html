@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="/static/styles/zTreeStyle/zTreeStyle.css" type="text/css"/>
+    <script src="/static/scripts/jquery-1.js" type="text/javascript"></script>
+    <script src="/static/scripts/jquery.ztree.all.js" type="text/javascript"></script>
+</head>
+<body>
+    <ul id="tree" class="ztree">
+    </ul>
+</body>
+<script type="text/javascript" src="/static/scripts/cookies.js"></script>
+<script type="text/javascript">
+    function getTreeOptions(){
+        var options = {
+            callback:{
+                //beforeClick:beforeClick,
+                onClick:onClick
+            }
+        };
+        return options;
+    }
+    function initTree(){
+        var options = getTreeOptions();
+        $.ajax({
+            url:'/gettree',
+            type:'POST',
+            dataType:'json',
+            success:function(data){
+                $.fn.zTree.init($('#tree'),options,data);
+            }
+        });
+    }
+
+    function onClick(event, treeId, treeNode, clickFlag){
+        tnType = treeNode['type'];
+        var nodeId = treeNode['id'];
+        var currentDbName = ''
+        var currentDbId = ''
+        var dbNode = null
+        var url = '';
+        if (tnType == 'table' || tnType == 'view' || tnType == 'uf' || tnType == 'sp'){
+            if(tnType == 'table'){
+                url = '/table/'+nodeId;
+            }
+            else if(tnType == 'view'){
+                url = '/view/'+nodeId;
+            }
+            else if(tnType == 'uf'){
+                url = '/uf/'+nodeId;
+            }
+            else{
+                url = '/uf/'+nodeId;
+            }
+            dbNode = treeNode.getParentNode().getParentNode();
+        }
+        else if (tnType == 'tables' || tnType=='views' || tnType == 'ufs' || tnType == 'sps'){
+            if(tnType == 'tables'){
+                url = '/tables/'+nodeId;
+            }
+            else if(tnType == 'views'){
+                url = '/views/'+nodeId;
+            }
+            else if(tnType == 'ufs'){
+                url = '/ufs/'+nodeId;
+            }
+            else{
+                url = '/sps/'+nodeId;
+            }
+            dbNode = treeNode.getParentNode();
+        }
+        else if(tnType == 'db'){
+            dbNode = treeNode;
+        }
+        if(dbNode){
+            setCookie('current_database_name',dbNode['name']);
+            setCookie('current_database_id',dbNode['id']);
+        }
+        if (url.length>0){
+            parent.frames[1].location.href = url;
+        }
+        parent.title = treeNode['name']
+    }
+
+    $(document).ready(function(){
+        initTree();
+    });
+</script>
+</html>

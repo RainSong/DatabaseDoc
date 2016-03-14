@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block  title %}
+    {{ viewInfo.Schema }}.{{ viewInfo.Name }}
+{% endblock %}
+
+{% block main %}
+<div id="pageTitle">
+    <img class="View32" title="Views" alt="Views"
+         src="/static/imgs/View32.png"> [{{viewInfo.Schema}}].[{{viewInfo.Name}}]
+</div>
+<!-- 描述备注 -->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed"
+                 src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded"
+                 src="/static/imgs/expanded.png">
+        </div>
+        <a name="description">描述/备注</a>
+    </div>
+    <div class="panel-body">{{ viewInfo.Description }}</div>
+</div>
+<!-- 描述备注 -->
+
+<!-- 相关属性 -->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed"
+                 src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded"
+                 src="/static/imgs/expanded.png">
+        </div>
+        <a name="properties">属性</a>
+    </div>
+    <div class="panel-body">
+        <table cellspacing="1" border="0" class="dataTable table-hover">
+        <tbody>
+        <tr>
+            <th>属性</th>
+            <th>值</th>
+        </tr>
+        <tr>
+            <td>ANSI Nulls On</td>
+            <td><span class="do-yes">True</span></td>
+        </tr>
+        <tr>
+            <td>Quoted Identifier On</td>
+            <td><span class="do-yes">True</span></td>
+        </tr>
+        <tr><td>创建时间</td><td>{{ viewInfo.CreateDate }}</td></tr>
+        <tr><td>最后修改时间</td><td>{{ viewInfo.ModifDate }}</td></tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+<!-- 相关属性 -->
+
+<!-- 列信息 -->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="" class="collapsed" title="collapsed" alt="collapsed"
+                 src="/static/imgs/collapsed.png">
+            <img style="display: none;" class="expanded" title="expanded" alt="expanded"
+                 src="/static/imgs/expanded.png">
+        </div>
+        <a name="columns">Columns</a>
+    </div>
+    <div class="panel-body">
+        <table cellspacing="1" border="0" class="dataTable table-hover">
+            <tbody>
+                <tr>
+                    <th>列名</th>
+                    <th>数据类型</th>
+                    <th>最大程度</th>
+                    <th>是否允许空</th>
+                </tr>
+                {% for col in viewInfo.Columns %}
+                <tr>
+                    <td>
+                        {{ col.Name }}
+                    </td>
+                    <td>
+                        {{ col.DataType }}
+                    </td>
+                    <td>{{ col.MaxLength }}</td>
+                    <td>
+                        <div class="tick">
+                            {% if col.AllowNull %}
+                                <span class="do-yes">是</span>
+                            {% else %}
+                                <span class="do-no">否</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- 列信息 -->
+
+<!-- 脚本 -->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading">
+        <div class="expandCollapse">
+            <img style="display:none;" class="collapsed" title="collapsed" alt="collapsed"
+                 src="/static/imgs/collapsed.png">
+            <img style="" class="expanded" title="expanded" alt="expanded"
+                 src="/static/imgs/expanded.png">
+        </div>
+        <a name="sqlscript">SQL Script</a>
+    </div>
+    <div class="panel-body">
+        <div id="sqlScript">{{ viewInfo.Script }}</div>
+    </div>
+</div>
+<!-- 脚本 -->
+
+{% endblock %}

@@ -19,6 +19,9 @@ class DataBase(DBObject):
 class Table(DBObject):
     Schema = ''
     Columns = None
+    Indexes = None
+    ForeignKeys = None
+    DefaultConstraints = None
     Script = ''
     RowCount = 0
 
@@ -40,19 +43,50 @@ class Column:
     DataType = ''
     AllowNull = True
     MaxLength = 0
-    IdentityInfo = ''
-    DefaultValue = ''
+    IsIdentity = False
+    IdentitySeed = 0
+    IdentityIncrement = 0
     Description = ''
     IsPrimary = False
     IsIndex = False
+    Collation = ''
 
 class Index:
     ID = 0,
     Name = ''
     IsPrimaryKey = ''
     IsUnique = ''
-    ColumnNames = ''
+    IsPadded = False
+    IgnoreDupKey = False
+    AllowRowLocks = True
+    AllowPageLocks = True
     Description = ''
+    IndexColumns = None
+    IndexColumnNames = ''
+class IndexColumn:
+    ID = 0
+    IndexID = 0
+    IsDescendingKey = False
+    ColumnName = ''
+
+class ForeignKey:
+    ID = 0
+    Name = ''
+    ColumnName = ''
+    RefrencedObjectID = 0
+    RefrencedObjectSchema = ''
+    ReferenceObjectName = ''
+    RefrencedColumn = ''
+    Description = ''
+
+class DefaultConstraint:
+    ID = 0
+    Name = ''
+    Definition = ''
+    ColumnID = 0
+    ColumnName = ''
+    Description = ''
+
 
 
 

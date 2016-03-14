@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block  title %}
-数据库信息
+[{{ tableInfo.Schema }}].[{{ tableInfo.Name }}]
 {% endblock %}
 
 {% block main %}
@@ -79,7 +79,7 @@
                 <th>允许为空</th>
                 <th>自增</th>
                 <th>默认值</th>
-                <th>描述与备注</th>
+                <th>描述/备注</th>
             </tr>
             {% for col in tableInfo.Columns %}
             <tr>
@@ -106,10 +106,16 @@
                     </div>
                 </td>
                 <td>
-                    {{ col.IdentityIinfo }}
+                    {% if col.IsIdentity %}
+                        {{ col.IdentitySeed }}-{{ col.IdentityIncrement }}
+                    {% endif %}
                 </td>
                 <td>{{ col.DefaultValue }}</td>
-                <td  style="max-width:300px;">{{ col.Description }}</td>
+                <td  style="max-width:300px;">
+                    {% if col.Description != None %}
+                        {{ col.Description }}
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -137,24 +143,114 @@
                 <th>是否唯一</th>
                 <th>描述/备注</th>
             </tr>
+            {% for index in tableInfo.Indexes %}
             <tr>
                 <td>
-                    <a href="#indexes">
-                        <img src="/static/imgs/pkcluster.png"
-                             alt="Cluster Primary Key PK_Address_AddressID: AddressID"
-                             title="Cluster Primary Key PK_Address_AddressID: AddressID"
-                             class="pkcluster">
-                    </a>
+                    {% if index.IsPrimaryKey %}
+                        <a href="#indexes">
+                            <img src="/static/imgs/pkcluster.png"
+                                 alt=""
+                                 title=""
+                                 class="pkcluster">
+                        </a>
+                    {% endif %}
                 </td>
-                <td>PK_Address_AddressID</td>
-                <td>AddressID</td>
+                <td>
+                   {{ index.Name }}
+                </td>
+                <td style="max-width:100px;overflow:break;">{{ index.IndexColumnNames }}</td>
                 <td>
                     <div class="tick">
-                        <span class="do-yes">True</span>
+                        {% if index.IsUnique %}
+                            <span class="do-yes">是</span>
+                        {% else %}
+                             <span class="do-no">否</span>
+                        {% endif %}
                     </div>
                 </td>
-                <td>Primary key (clustered) constraint</td>
-            </tr><tr><td></td><td>AK_Address_rowguid</td><td>rowguid</td><td><div class="tick"><span class="do-yes">True</span></div></td><td>Unique nonclustered index. Used to support replication samples.</td></tr><tr><td></td><td>IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode</td><td>AddressLine1, AddressLine2, City, StateProvinceID, PostalCode</td><td><div class="tick"><span class="do-yes">True</span></div></td><td>Nonclustered index.</td></tr><tr><td></td><td>IX_Address_StateProvinceID</td><td>StateProvinceID</td><td></td><td>Nonclustered index.</td></tr></tbody></table></div></div>
+                <td style="max-width:200px;overflow:break;">
+                    {% if index.Description != None %}
+                        {{ index.Description }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 <!--索引信息-->
 
+<!--外键信息-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading"><div class="expandCollapse">
+        <img style="display: none;"
+             class="collapsed"
+             title="collapsed"
+             alt="collapsed"
+             src="/static/imgs/collapsed.png">
+        <img style="display: inline;"
+             class="expanded"
+             title="expanded"
+             alt="expanded"
+             src="/static/imgs/expanded.png">
+    </div>
+    <a name="foreignkeys">外键</a>
+    </div>
+    <div class="panel-body">
+        <table cellspacing="1" border="0" class="dataTable table-hover">
+            <tbody>
+            <tr>
+                <th>名称</th>
+                <th >列</th>
+                <th>描述/备注</th>
+            </tr>
+            {% for key in tableInfo.ForeignKeys %}
+            <tr>
+                <td>{{ key.Name }}</td>
+                <td style="max-width:200px;">{{ key.ColumnName }}-&gt;<a href="/table/{{ key.RefrencedObjectID }}">[{{ key.RefrencedObjectSchema }}].[{{ key.RefrencedObjectName }}].[{{ key.ColumnName }}]</a></td>
+                <td>
+                    {% if key.Description != None %}
+                        {{ key.Description }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--外键信息-->
+
+<!--脚本-->
+<div class="panel panel-default panel-collapsible">
+    <div class="panel-heading"><div class="expandCollapse">
+        <img style="display:none;"
+             class="collapsed"
+             title="collapsed"
+             alt="collapsed"
+             src="/static/imgs/collapsed.png">
+        <img style=""
+             class="expanded"
+             title="expanded"
+             alt="expanded"
+             src="/static/imgs/expanded.png">
+    </div>
+        <a name="sqlscript">脚本</a>
+    </div>
+    <div class="panel-body">
+        <pre id="sqlScript" class="syntaxhighlighter sql">{{ tableInfo.Script }}</pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot %}
+<link href="/static/styles/shCoreDefault.css" rel="stylesheet">
+<script src="/static/scripts/shCore.js" type="text/javascript"></script>
+<script src="/static/scripts/shBrushSql.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        SyntaxHighlighter.all();
+    });
+</script>
 {% endblock %}
